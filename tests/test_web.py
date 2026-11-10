@@ -14,11 +14,11 @@ class GetFormTest(unittest.TestCase):
         body = resp.get_data(as_text=True)
         for field in ("vcc", "r1", "r2", "rc", "re", "beta", "vbe"):
             self.assertIn(f'name="{field}"', body)
+        self.assertIn("Calculate DC Bias", body)
 
     def test_get_index_prefills_reference_values(self):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn('value="100000"', body)
-        self.assertIn("Calculate DC Bias", body)
 
 
 class CalculateTest(unittest.TestCase):
@@ -36,7 +36,7 @@ class CalculateTest(unittest.TestCase):
         resp = self.post()
         self.assertEqual(resp.status_code, 200)
         body = resp.get_data(as_text=True)
-        for expected in ("1.942", "1.242", "9.294", "8.052", "1.230", "region-active"):
+        for expected in ("1.942", "1.242", "9.294", "8.052", "1.230", "12.30", "Active"):
             self.assertIn(expected, body)
 
     def test_zero_resistor_shows_error(self):
@@ -59,9 +59,9 @@ class CalculateTest(unittest.TestCase):
         resp = self.post(r2="4700")
         self.assertEqual(resp.status_code, 200)
         body = resp.get_data(as_text=True)
-        self.assertIn("region-cutoff", body)
+        self.assertIn("Cutoff", body)
         self.assertIn("Forward-Active", body)
-        self.assertIn("0.000", body)  # IC ถูก clamp เป็น 0 mA
+        self.assertIn("0.000", body)
 
     def test_saturation_warning_shown(self):
         resp = self.client.post("/calculate", data={
@@ -69,8 +69,4 @@ class CalculateTest(unittest.TestCase):
             "re": "470", "beta": "150", "vbe": "0.70"})
         body = resp.get_data(as_text=True)
         self.assertEqual(resp.status_code, 200)
-        self.assertIn("region-saturation", body)
-
-
-if __name__ == "__main__":
-    unittest.main()
+        self.assertIn("Saturation", body)

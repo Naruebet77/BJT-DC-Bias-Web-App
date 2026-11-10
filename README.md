@@ -7,6 +7,8 @@ Common-Emitter amplifier using **Voltage-Divider Bias** under the Forward-Active
 approximation (constant β and V_BE). All results are computed by the Python
 backend — nothing is hard-coded in the HTML template.
 
+**Status:** implemented (ready for commit via GitHub Desktop).
+
 ## Scope
 
 In scope: DC bias only (V_CC, R1, R2, R_C, R_E, β, V_BE → V_B, V_E, V_C, V_CE, I_C).
@@ -24,24 +26,33 @@ interactive schematic editor, FET, SPICE.
 ├── tests/
 │   ├── test_dc_bias.py     # engineering math, regions, validation
 │   └── test_web.py         # Flask HTTP route tests
-├── requirements.txt
+├── requirements.txt        # Flask 3.1.3
 ├── AGENTS.md               # conventions for AI coding agents
+├── .gitignore
+├── README.md
 └── docs/
     ├── design-note.md
-    ├── validation.md
+    ├── validation.md       # test evidence + acceptance criteria A1–A7
     └── reflection.md
+    └── superpowers/
+        ├── specs/          # approved design doc
+        └── plans/          # implementation plan (5 tasks)
 ```
 
-## Setup and run
-
-Windows PowerShell:
+## Setup and run (Windows PowerShell)
 
 ```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-python -m flask --app app run --debug
+# create virtual environment (run once)
+.venv\Scripts\python.exe -m venv .venv
+
+# install dependencies
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+# run the Flask development server
+.venv\Scripts\python.exe -m flask --app app run --debug
 ```
+
+Then open **http://127.0.0.1:5000/** in a browser.
 
 macOS / Linux:
 
@@ -51,9 +62,6 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 python -m flask --app app run --debug
 ```
-
-Open <http://127.0.0.1:5000/> in a browser, enter the component values and press
-**Calculate DC Bias**.
 
 The app must be run through the local Flask server. Opening
 `templates/index.html` directly with `file://` does not work, because the
@@ -109,10 +117,11 @@ This is not SPICE.
 ## Tests
 
 ```powershell
-python -m unittest discover -s tests -v
+.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
 17 tests: 9 engineering/validation tests and 8 Flask test-client tests.
+Full evidence and acceptance criteria: `docs/validation.md`
 
 ## Development workflow
 

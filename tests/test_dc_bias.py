@@ -56,6 +56,7 @@ class RegionTest(unittest.TestCase):
         self.assertAlmostEqual(r.vb, r.vth, places=9)
         self.assertAlmostEqual(r.vce, 12.0 - r.vth, places=9)
         self.assertTrue(r.warnings)
+        self.assertTrue(any("Forward-Active" in w for w in r.warnings))
 
     def test_saturation_reports_unclamped_values(self):
         r = compute_dc_bias(vcc=12.0, r1=47_000.0, r2=10_000.0, rc=4_700.0,
@@ -69,7 +70,3 @@ class RegionTest(unittest.TestCase):
         r = compute_dc_bias(**{**REF, "vbe": 0.30})
         self.assertEqual(r.region, "active")
         self.assertTrue(any("VBE" in w for w in r.warnings))
-
-
-if __name__ == "__main__":
-    unittest.main()
