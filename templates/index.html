@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BJT DC Bias — Voltage Divider</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<main class="page">
+  <header class="head">
+    <h1>BJT DC Bias Calculator</h1>
+    <p class="sub">Common-Emitter · Voltage-Divider Bias · Forward-Active Approximation</p>
+  </header>
+
+  {% if errors %}
+  <section class="panel panel-error" role="alert">
+    <h2>ไม่สามารถคำนวณได้</h2>
+    <ul>
+      {% for message in errors %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  <section class="layout">
+    <form class="panel panel-form" method="post" action="/calculate">
+      <h2>ข้อมูลเข้า</h2>
+
+      <label for="vcc">แรงดันแหล่งจ่าย VCC (V)</label>
+      <input id="vcc" name="vcc" type="text" inputmode="decimal" value="{{ inputs['vcc'] }}" required>
+
+      <label for="r1">ตัวต้านทาน R1 (Ω)</label>
+      <input id="r1" name="r1" type="text" inputmode="decimal" value="{{ inputs['r1'] }}" required>
+
+      <label for="r2">ตัวต้านทาน R2 (Ω)</label>
+      <input id="r2" name="r2" type="text" inputmode="decimal" value="{{ inputs['r2'] }}" required>
+
+      <label for="rc">ตัวต้านทาน RC (Ω)</label>
+      <input id="rc" name="rc" type="text" inputmode="decimal" value="{{ inputs['rc'] }}" required>
+
+      <label for="re">ตัวต้านทาน RE (Ω)</label>
+      <input id="re" name="re" type="text" inputmode="decimal" value="{{ inputs['re'] }}" required>
+
+      <label for="beta">อัตราขยายกระแส β (ไม่มีหน่วย)</label>
+      <input id="beta" name="beta" type="text" inputmode="decimal" value="{{ inputs['beta'] }}" required>
+
+      <label for="vbe">แรงดันฐาน-อิมิตเตอร์ VBE (V)</label>
+      <input id="vbe" name="vbe" type="text" inputmode="decimal" value="{{ inputs['vbe'] }}" required>
+
+      <button type="submit">Calculate DC Bias</button>
+    </form>
+
+    {% if view %}
+    <section class="panel panel-result">
+      <h2>DC Bias Results</h2>
+      <p class="region region-{{ result.region }}">
+        สถานะการทำงาน: <strong>{{ result.region|capitalize }}</strong>
+      </p>
+
+      <table class="results">
+        <tbody>
+          <tr><th>VB</th><td>{{ view.vb }}</td></tr>
+          <tr><th>VE</th><td>{{ view.ve }}</td></tr>
+          <tr><th>VC</th><td>{{ view.vc }}</td></tr>
+          <tr><th>VCE</th><td>{{ view.vce }}</td></tr>
+          <tr><th>IC</th><td>{{ view.ic }}</td></tr>
+          <tr><th>IB</th><td>{{ view.ib }}</td></tr>
+          <tr><th>IE</th><td>{{ view.ie }}</td></tr>
+          <tr><th>VTH</th><td>{{ view.vth }}</td></tr>
+          <tr><th>RTH</th><td>{{ view.rth }}</td></tr>
+        </tbody>
+      </table>
+
+      {% if result.warnings %}
+      <div class="warnings" role="status">
+        <h3>คำเตือน</h3>
+        <ul>
+          {% for message in result.warnings %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if input_summary %}
+      <p class="summary">
+        ค่าที่ใช้คำนวณ: VCC {{ input_summary.vcc }} ·
+        R1 {{ input_summary.r1 }} · R2 {{ input_summary.r2 }} ·
+        RC {{ input_summary.rc }} · RE {{ input_summary.re }} ·
+        β {{ input_summary.beta }} · VBE {{ input_summary.vbe }}
+      </p>
+      {% endif %}
+    </section>
+    {% endif %}
+  </section>
+</main>
+</body>
+</html>
