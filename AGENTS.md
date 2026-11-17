@@ -5,9 +5,14 @@ BJT Common-Emitter **DC Bias** web app (ENG29 2121 Lab 02).
 Flask + Python backend, multi-file layout, automated tests.
 
 ## Scope guard
-In scope: DC operating point for **Voltage-Divider Bias** only.
-Out of scope for this lab: AC small-signal, Bode plot, transient, signal generator,
-interactive schematic editor, FET, and any SPICE integration.
+In scope: DC operating point for **Voltage-Divider Bias** (Lab 2, unchanged),
+**Fixed Bias** and single-supply **Emitter Bias** (Lab 3). Each mode takes VCC,
+RC, β and VBE plus its own resistors (R1/R2/RE, RB, RB/RE).
+
+Out of scope: AC small-signal, Bode plot, transient, DC load line, signal generator,
+interactive schematic editor, FET, bypass capacitors and any SPICE integration.
+Lab 3 adds no new unit tests; verification is done in a real browser using the
+student's A1–A5 table.
 
 If a request implies out-of-scope work, say so and propose the smallest in-scope step.
 
@@ -15,7 +20,7 @@ If a request implies out-of-scope work, say so and propose the smallest in-scope
 | File | Responsibility |
 |---|---|
 | `app.py` | Flask app, HTTP GET/POST routes, input parsing, error handling |
-| `dc_bias.py` | Pure engineering calculations. Must not import Flask or know about HTML/HTTP |
+| `dc_bias.py` | Pure engineering calculations: `compute_dc_bias`, `compute_fixed_bias`, `compute_emitter_bias`. Must not import Flask or know about HTML/HTTP |
 | `templates/` | Jinja templates: form + results rendering. No physics equations here |
 | `static/` | CSS and static assets |
 | `tests/` | `test_dc_bias.py` (engineering math), `test_web.py` (Flask test client) |

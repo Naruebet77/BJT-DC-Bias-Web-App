@@ -3,22 +3,34 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BJT DC Bias — Voltage Divider</title>
+<title>BJT DC Bias — {{ mode_label }}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <div class="wrap">
-  <h1>BJT DC Bias — Voltage-Divider Bias</h1>
+  <h1>BJT DC Bias — {{ mode_label }}</h1>
   <p class="muted">สมมติฐาน Forward-Active: β คงที่, VBE คงที่ · ทุกตัวเลขคำนวณโดย Python backend</p>
 
+  <form class="mode-bar" method="get" action="{{ url_for('index') }}">
+    <label for="mode">เลือกวงจร</label>
+    <select id="mode" name="mode">
+      <option value="divider" {% if mode == 'divider' %}selected{% endif %}>Voltage Divider Bias</option>
+      <option value="fixed" {% if mode == 'fixed' %}selected{% endif %}>Fixed Bias</option>
+      <option value="emitter" {% if mode == 'emitter' %}selected{% endif %}>Emitter Bias</option>
+    </select>
+    <button type="submit" class="secondary">เปลี่ยนโหมด</button>
+  </form>
+
   <form method="post" action="{{ url_for('calculate') }}">
+    <input type="hidden" name="mode" value="{{ mode }}">
     <div class="grid">
       <div class="card inputs">
-        <h2>ข้อมูลเข้า</h2>
+        <h2>ข้อมูลเข้า · {{ mode_label }}</h2>
         <div class="field">
           <label>แรงดันแหล่งจ่าย <span>VCC</span> (V)</label>
           <input name="vcc" type="text" inputmode="decimal" value="{{ inputs.vcc }}">
         </div>
+        {% if mode == 'divider' %}
         <div class="field">
           <label>ตัวต้านทาน <span>R1</span> (Ω)</label>
           <input name="r1" type="text" inputmode="decimal" value="{{ inputs.r1 }}">
@@ -27,14 +39,22 @@
           <label>ตัวต้านทาน <span>R2</span> (Ω)</label>
           <input name="r2" type="text" inputmode="decimal" value="{{ inputs.r2 }}">
         </div>
+        {% elif mode == 'fixed' or mode == 'emitter' %}
+        <div class="field">
+          <label>ตัวต้านทาน <span>RB</span> (Ω)</label>
+          <input name="rb" type="text" inputmode="decimal" value="{{ inputs.rb }}">
+        </div>
+        {% endif %}
         <div class="field">
           <label>ตัวต้านทาน <span>RC</span> (Ω)</label>
           <input name="rc" type="text" inputmode="decimal" value="{{ inputs.rc }}">
         </div>
+        {% if mode == 'divider' or mode == 'emitter' %}
         <div class="field">
           <label>ตัวต้านทาน <span>RE</span> (Ω)</label>
           <input name="re" type="text" inputmode="decimal" value="{{ inputs.re }}">
         </div>
+        {% endif %}
         <div class="field">
           <label>โปรแกรมกระแส <span>β</span></label>
           <input name="beta" type="text" inputmode="decimal" value="{{ inputs.beta }}">
@@ -47,7 +67,8 @@
       </div>
 
       <div class="card results">
-        <h2>ผลลัพธ์ DC Bias</h2>
+        <h2>ผลลัพธ์ DC Bias · {{ mode_label }}</h2>
+        <p class="mode-note">โหมดที่ตรวจ: {{ mode_label }}</p>
 
         {% if errors %}
         <div class="errors">
@@ -61,7 +82,12 @@
         <div class="summary">
           <h3>ค่าที่ป้อน (แปลงหน่วยแล้ว)</h3>
           <p>VCC {{ input_summary.vcc }} · β {{ input_summary.beta }} · VBE {{ input_summary.vbe }}</p>
-          <p>R1 {{ input_summary.r1 }} · R2 {{ input_summary.r2 }} · RC {{ input_summary.rc }} · RE {{ input_summary.re }}</p>
+          <p>
+            {% if input_summary.r1 %}R1 {{ input_summary.r1 }} · R2 {{ input_summary.r2 }} · {% endif %}
+            {% if input_summary.rb %}RB {{ input_summary.rb }} · {% endif %}
+            RC {{ input_summary.rc }}
+            {% if input_summary.re %} · RE {{ input_summary.re }}{% endif %}
+          </p>
         </div>
         {% endif %}
 
@@ -75,8 +101,10 @@
           <tr><td>กระแสคอลเลกเตอร์ <span>IC</span></td><td>{{ view.ic }}</td></tr>
           <tr><td>กระแสฐาน <span>IB</span></td><td>{{ view.ib }}</td></tr>
           <tr><td>กระแสอิเตอร์ <span>IE</span></td><td>{{ view.ie }}</td></tr>
+          {% if mode == 'divider' %}
           <tr><td>แรงดัน Thevenin <span>VTH</span></td><td>{{ view.vth }}</td></tr>
           <tr><td>แรงต้านทาน Thevenin <span>RTH</span></td><td>{{ view.rth }}</td></tr>
+          {% endif %}
         </table>
 
         <div class="region-badge region-{{ result.region }}">

@@ -28,3 +28,9 @@ button:hover{background:#0c304f}
 .summary{background:#f0f7fc;border:1px solid var(--line);border-radius:6px;padding:12px;margin:12px 0;font-size:0.9rem}
 .summary p{margin:4px 0}
 .note{font-size:0.85rem;color:var(--muted);margin-top:12px}
+.mode-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:9px;padding:12px 16px;margin-bottom:16px}
+.mode-bar label{font-size:0.9rem;color:var(--muted)}
+.mode-bar select{padding:8px 10px;border:1px solid var(--line);border-radius:5px;font:1rem/1.5 Tahoma,"Noto Sans Thai",Arial,sans-serif;background:#fff}
+.mode-bar button.secondary{margin-top:0;background:var(--blue)}
+.mode-bar button.secondary:hover{background:#154b6b}
+.mode-note{font-size:0.85rem;color:var(--muted);margin:0 0 8px}
